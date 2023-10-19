@@ -1,0 +1,196 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+/*
+Partsmenu function:
+The function partsmenu that takes in no arguments and returns an integer value (option). The function displays a text menu option to the user and takes the option the user enters through the keyboard. The function returns the option chosen by the user.
+*/
+
+int partsmenu();
+int partsmenu()
+{
+	int option; //holds the option the user chooses from the menu.
+	do //it’s a do while since we need the menu to loop once at least
+	{
+		//asking the user to chose an option from the menu
+		cout << "1) Enter new part number\n2) View all part numbers\n3) search for part\n4) Exit\nEnter option: "; //printing the menu option for the user
+		cin >> option;
+		cout << endl;
+
+		//error checking to make sure the user doesn't enter anything other than 1,2,3 or 4
+		if (option != 1 && option != 2 && option != 3 && option != 4)
+		{
+			cout << "Invalid Option!" << endl;
+		}
+
+	} while (option != 1 && option != 2 && option != 3 && option != 4); //it’s going to keep looping until the condition in the while becomes false.
+	return option; //since the function is of type int, it needs a return value of the same type
+}
+
+/*
+readParts function:
+This function reads the data from the user. In this function, the user should be prompted of how many parts they need to add, and prompt the user for the part number, price, and classification based on the number of parts he/she wants to add.
+
+Input parameters:
+*Array part_num: this array will be passed from the main and filled with values in this function. This function will add the part numbers entered by the user into the part_num array.
+*Array price: this array will be passed from the main and filled with values in this function. This function will add the price values entered by the user into the price array.
+*Pass by reference n which is related to the number of parts that are actually added to the array. Should be incremented every time a new part is added to the array.
+*/
+
+void readParts(char part_num[][10], double price[], char pclass[], int& n);
+void readParts(char part_num[][10], double price[], char pclass[], int& n)
+{
+	int parts; //holds the number of parts the user wants to add
+//asking the user for the number of parts
+	cout << "Enter the number of parts to add: ";
+	cin >> parts;
+	cout << endl;
+
+	//a for loop is used to allow the user to enter the part number, price and class for each part they want to add
+	for (int i = 0; i < parts; i++)
+	{
+		//getting the part number from the user
+		cout << "Enter part number: ";
+		cin >> part_num[n]; //since n is related to the number of parts that are added to the array, it needs to be in the brackets instead of "i" so that the existing parts in the array aren't overridden. The same goes for price[n] and pclass[n].
+
+		//getting the price from the user
+		cout << "Enter price: ";
+		cin >> price[n];
+
+		//getting the class from the user
+		cout << "Enter classification: ";
+		cin >> pclass[n];
+
+		cout << endl;
+
+		//error checking to make sure the user doesn't enter a class other than A,B or C (case insensitive)
+		while (pclass[n] != 'A' && pclass[n] != 'B' && pclass[n] != 'C' && pclass[n] != 'a' && pclass[n] != 'b' && pclass[n] != 'c')
+		{
+			cout << "Invalid class.\nPlease enter a valid class [A, B, or C]: ";
+			cin >> pclass[n];
+			cout << endl;
+		}
+		n++; //Every time a new part is added n is incremented which is why its inside the for loop moreover, we increment n to indicate that we have added one more part to the arrays.
+	}
+}
+
+/*
+search function:
+This function will search for a specific part number in the part_num array. The function returns the index location in the array of where the part number is found. If not found, return -1.
+
+Input parameters:
+*Array part_num: this array holds the part numbers.
+*Pass a cstring s_target: the part number to search for.
+*Pass by value n: is the number of parts inserted in the array.
+*/
+
+int search(char part_num[][10], char s_target[], int n);
+int search(char part_num[][10], char s_target[], int n)
+{
+	//a for loop is used since we need it to loop through every part number to check if a match is found
+	for (int i = 0; i < n; i++)
+	{
+		if (strcmp(part_num[i], s_target) == 0) //checking if the part_num is the same as the target part
+		{
+			return i; //it returns the index location if it’s the same
+		}
+	} 
+	return -1; //returns -1 if the ID doesn't exist/isn't found
+} 
+
+/*
+displayparts function:
+This function is to display the values stored in the arrays on the screen.
+
+Input parameters:
+*part_num: this array holds the part numbers.
+* price: this array holds the price
+* pclass: this array holds the classification
+* pass by value n: is the number of parts inserted in the array.
+*/
+
+void displayparts(char part_num[][10], double price[], char pclass[], int n);
+void displayparts(char part_num[][10], double price[], char pclass[], int n)
+{
+	//displaying the values of the ID, price, and class to the user
+	cout << "PartID\tPrice\tClass" << endl;
+	cout << "=========================" << endl;
+	//loops through and prints out the values until the number of parts inserted in the array is reached
+	for (int i = 0; i < n; i++)
+	{
+		cout << part_num[i] << "\t" << price[i] << "\t" << pclass[i] << endl;
+	}
+	cout << endl; 
+}
+
+int main()
+{
+	//constant variable:
+	//MAX_PARTS: holds the maximum number of parts.
+	
+	//*note: the max length of each part [10] wasn’t made into a constant variable since the functions above don’t have it as a constant variable and we’re not supposed to change the functions.
+	
+	const int MAX_PARTS = 100;
+
+	//part_num array: it’s a 2d array that holds the maximum number of parts (100) and the maximum length of each part (10).
+	//pclass: is a 1d array that holds the classification of the part. It also holds a max length of MAX_PARTS (100)
+	//price: it’s a 1d array that holds the price of the part. It also holds a max length of MAX_PARTS (100)
+	//n: holds the number of parts in the array
+	//option: holds the option the user chooses from the menu.
+
+	char part_num[MAX_PARTS][10], pclass[MAX_PARTS];  
+	double price[MAX_PARTS]; 
+	int n = 0; 
+	int option; 
+
+	do {
+		option = partsmenu(); //we are calling the function partsmenu in the main by storing it in the int variable option since the function returns an integer
+
+		//a switch is used since different functions are for each menu/case
+		switch (option) { 
+		case 1:
+			readParts(part_num, price, pclass, n); //readParts function call in the main. Its a void function so it doesnt return a value therefore, it doesn't need to be stored in a variable.
+			break;
+		case 2:
+			displayparts(part_num, price, pclass, n); //display function call in the main. Its a void function so it doesnt return a value therefore, it doesn't need to be stored in a variable.
+			break;
+		case 3: 
+		{
+			char s_target[10]; //s_target: holds the target char which is used to find the desired part from the user. It has a maximum lenth of 10 including the \0 character.
+			//getting desired part number from the user to search for
+			cout << "Enter part number: ";
+			cin >> s_target;
+
+			//calling the search function in the main. It needs to be stored in an int variable since the function returns an int value.
+			int result = search(part_num, s_target, n);
+			
+			//if the search function returns -1 then it will display that no parts were found
+			if (result == -1) 
+			{
+				//the following is displayed to the user
+				cout << "No parts found...\n" << endl;
+			}
+			//if the search function returns the index location then a part was found so it will display the ID, price and class
+			else 
+			{
+				//displays the info (ID, price, and class of the result(index location)) to the user
+				cout << "PartID\tPrice\tClass" << endl;
+				cout << "=========================" << endl;
+				cout << part_num[result] << "\t" << price[result] << "\t" << pclass[result] << "\n" << endl;
+			}
+			break;
+		}
+		case 4:
+			//display the end of the program if the user enters 4 in the menu
+			cout << "END OF PROGRAM...." << endl;
+			break;
+		default:
+			//error checking if the user doesn't enter 1,2,3 or 4
+			cout << "Invalid option!" << endl;
+		}
+
+	} while (option != 4); //if the user enters 4 then case 4 will run, the loop will end and the program will also end.
+
+	return 0;
+}
