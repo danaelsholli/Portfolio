@@ -1,0 +1,343 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+/*variables dictionary:
+
+*fname: holds the first name of the customer
+
+*lname: holds the last name of the customer
+
+*phone: holds the phone number of the customer
+
+*minutes: holds the minutes used by the customer
+
+*data: holds the amount of data used by the customer
+
+*option: holds the input from the user 1 to continue and 2 to exit the program
+
+*cost_a: holds the cost of package A based on the customer usage
+
+*cost_b: holds the cost of package B based on the customer usage
+
+*cost_c: holds the cost of package C based on the customer usage
+
+*cost: holds the cost based on the signed up package
+
+*recCost: holds the cost of the recommended package
+
+*package: holds the package input from the user
+
+*recPackage: holds the recommended package
+
+*/
+
+/*
+Constant variables dictionary:
+
+* DATA_COST_A: holds the additional data cost for package A
+
+* DATA_COST_B: holds the additional data cost of package B
+
+* MIN_COST_A: holds the additional minute cost for package A
+
+* MIN_COST_B: holds the additional minute cost for package B
+
+* INIT_COST_A: holds the initial cost of package A
+
+* INIT_COST_B: holds the initial cost of package B
+
+* INIT_COST_C: holds the initial cost of package C
+
+* INCL_MIN_A: holds the included amount of minutes for package A
+
+* INCL_MIN_B: holds the included amount of minutes for package B
+
+* INCL_DATA_B: holds the included amount of data for package B
+
+*/
+
+
+string fname, lname;
+
+const double DATA_COST_A = 0.5;
+const double DATA_COST_B = 0.35;
+
+const double MIN_COST_A = 0.5;
+const double MIN_COST_B = 0.3;
+
+const double INIT_COST_A = 50;
+const double INIT_COST_B = 100;
+const double INIT_COST_C = 200;
+
+const int INCL_MIN_A = 50;
+const int INCL_MIN_B = 60;
+const int INCL_DATA_B = 100;
+
+double cost_a = 0, cost_b = 0, cost_c = 0, recCost = 0, cost = 0;
+char recPackage, package;
+
+//Every function below has been declared and defined
+
+//The function getInValue will get the input from the user for the first name, last name, phone number, minutes used, data used, and package selection (with error checking). It’s a void function therefore there isn't a need for a return value.
+
+void getInValue(string& fname, string& lname, string& phone, int& minutes, int& dataused, char& package);
+void getInValue(string& fname, string& lname, string& phone, int& minutes, int& dataused, char& package) {
+	//getting the first name input from the user
+	cout << "Enter first name: ";
+	cin >> fname;
+
+	//getting the last name input from the user
+	cout << "Enter last name: ";
+	cin >> lname;
+
+	//getting the phone input from the user
+	cout << "Enter phone number: ";
+	cin >> phone;
+
+	//getting package A,B,C input from the user with error checking to make sure they don’t enter anything other than A,B or C 
+	do {
+
+		cout << "Enter your mobile package (A, B or C): ";
+		cin >> package;
+		if (package != 'A' && package != 'B' && package != 'C')
+
+		{
+
+			cout << "\nError Invalid Package. \n";
+
+		}
+
+	} while (package != 'A' && package != 'B' && package != 'C');
+
+	//asking the user to input minutes used
+	cout << "Enter minutes used: ";
+	cin >> minutes;
+
+	//asking the user to input data used
+	cout << "Enter data used: ";
+	cin >> dataused;
+}
+
+//The function getInValue is an overloaded function which will get the input from the user for the phone number, minutes used, data used, and package selection (with error checking) without passing fname and lname. Its a void function therefore there isn't a need for a return value. This overloaded function is used after the user is asked if they would like to add another phone number (assuming they choose 1)
+
+void getInValue(string& phone, int& minutes, int& dataused, char& package);
+void getInValue(string& phone, int& minutes, int& dataused, char& package) {
+	
+	//getting the phone input from the user
+	cout << "Enter phone number: ";
+	cin >> phone;
+
+	//getting package A,B,C input from the user with error checking to make sure they don’t enter anything other than A,B or C
+	do {
+
+		cout << "Enter your mobile package (A, B or C): ";
+		cin >> package;
+		if (package != 'A' && package != 'B' && package != 'C')
+
+		{
+
+			cout << "\nError Invalid Package. \n";
+
+		}
+
+	} while (package != 'A' && package != 'B' && package != 'C');
+
+	//asking the user to input minutes used
+	cout << "Enter minutes used: ";
+	cin >> minutes;
+
+	//asking the user to input data used
+	cout << "Enter data used: ";
+	cin >> dataused;
+}
+
+//The function takes in the minutes used, data used, and package selection as input parameters and returns the cost based on the user usage.
+
+double calc_price(int minutes, int dataused, char package);
+double calc_price(int minutes, int dataused, char package) {
+
+	//the following switch calculates the cost for each package
+
+	switch (package) {
+	case 'A':
+		cost_a = INIT_COST_A + ((minutes - INCL_MIN_A) * MIN_COST_A) + (dataused * 0.05);
+		//initializing cost to cost_a if the user enters package A
+		cost = cost_a;
+	
+		break;
+	case 'B':
+		if (minutes > INCL_MIN_B) {
+			cost_b = INIT_COST_B + ((minutes - INCL_MIN_B) * MIN_COST_B);
+			//initializing cost to cost_b if the user enters package B
+			cost = cost_b;
+		}
+		else {
+			cost_b = INIT_COST_B;
+			cost = cost_b;
+		}
+		if (dataused > INCL_DATA_B) {
+			cost_b += ((dataused - INCL_DATA_B) * DATA_COST_B);
+			//initializing cost to cost_b if the user enters package B
+			cost = cost_b;
+		}
+		break;
+	case 'C':
+		cost_c = INIT_COST_C;
+		//initializing cost to cost_c if the user enters package C
+		cost = cost_c;
+		break;
+	default:
+		cout << "Invalid package selection.\n";
+		break;
+	}
+	return cost; //since the function is a double, the return value is cost which is a double
+}
+
+//The function recommendpackage takes in the minutes used and data used, and returns a character related to the recommended package(A,B, or C) that has more saving.
+
+char recommendpackage(int minutes, int data);
+char recommendpackage(int minutes, int data) {
+
+	//all the costs from the previous function calc_price are used here to see which package has more savings
+	cost_a = calc_price(minutes, data, 'A');
+	cost_b = calc_price(minutes, data, 'B');
+	cost_c = calc_price(minutes, data, 'C');
+
+	//Package B is to be recommended if cheaper than A and C 
+	if (cost_b < cost_a && cost_b < cost_c) {
+		recPackage = 'B';
+		recCost = cost_b;
+	}
+	// Package C is to be recommended if cheaper than A and B 
+	else if (cost_c < cost_a && cost_c < cost_b) {
+		recPackage = 'C';
+		recCost = cost_c;
+	}
+	// package A is to be recommended if it is cheaper than B and C 
+	else {
+		recPackage = 'A';
+		recCost = cost_a;
+	}
+		return recPackage; //it returns the char value recPackage which holds the most cost-effective package
+	}
+
+// The function displayInvoice takes in the first name, last name, phone number, minutes, data used, package and cost, and formats the invoice and outputs it to the screen for the user.
+	void displayInvoice(string fname, string lname, string phone, int minutes, int dataused, char package, double cost);
+	void displayInvoice(string fname, string lname, string phone, int minutes, int dataused, char package, double cost) {
+		//The following displays the invoice which includes the first and last name, minutes and data used, the package the user is on and the total balance for the user's chosen package based on the minutes and data used
+		cout << "\n\t\t" << fname << " " << lname << " Invoice (" << phone << ")\n";
+		cout << "-----------------------------------------------------------------\n";
+		cout << "Minutes used: " << minutes << endl;
+		cout << "Data used: " << dataused << endl << endl;
+		cout << "You are on Package: " << package << "\n";
+		cout << "Total balance is: " << cost << " AED" << endl;
+
+		//the following switch displays the information about the chosen package depending on the case/package inputted by the user.
+		switch (package) {
+
+		case 'A':
+
+			cout << endl << INIT_COST_A << " AED/month includes " << INCL_MIN_A << " minutes. Additional minute costs " << MIN_COST_A << " AED. Data usage is " << DATA_COST_A << " AED per 1M8." << endl;
+
+			break;
+
+		case 'B':
+
+			cout << endl << INIT_COST_B << " AED/month includes " << INCL_MIN_B << " minutes, " << INCL_DATA_B << " MB of data. Additional minute costs " << MIN_COST_A << " AED, and any extra data usage beyond the " << INCL_DATA_B << " MB costs " << DATA_COST_B << " AED per 1MB." << endl;
+
+			break;
+
+		case 'C':
+
+			cout << endl << INIT_COST_C << " AED/month includes unlimited calling minutes and unlimited data usage." << endl;
+
+			break;
+		}
+		//initializing recPackage to the function recommendpackage to use it for the recommendation in the displayInvoice function
+		char recPackage = recommendpackage(minutes, dataused);
+		//for the recommendation to not be needed the recommended package needs to be equal to the package chsoen by the user
+		if (recPackage == package) {
+
+			//if a recommendation isn't needed it displays the thank you message
+			cout << "\nThank you for being a customer with InGageX Mobile Services\n" << endl;
+
+		}
+		else {
+			//displaying the recommendation 
+			cout << "\nDear " << fname << ", ";
+			cout << "\nYou are paying for options that you are not using. Consider changing your plan to Package " << recPackage;
+			cout << " You could have saved " << cost – recCost << " AED on this month's bill.\n"; //calculates the amount the user would be saving if they switched to the recommended package
+
+		}
+	}
+	int main() {
+
+		/*variables dictionary:
+		
+		*fname: holds the first name of the customer
+
+        *lname: holds the last name of the customer
+
+		*phone: holds the phone number of the customer
+
+		*minutes: holds the minutes used by the customer
+
+		*data/dataused: holds the amount of data used by the customer
+
+		*option: holds the input from the user 1 to continue and 2 to exit the program
+
+		*cost: holds the cost based on the signed up package
+
+		*recCost: holds the cost of the recommended package
+
+		*package: holds the package input from the user
+
+		*recPackage: holds the recommended package
+		
+		*repeat: holds a booloean value of 0 == false
+
+		*/
+
+		string fname, lname, phone; 
+		int minutes, dataused; 
+		char package, option; 
+		double cost;
+		bool repeat = false;
+
+		//sets the decimal precision to 2
+		cout.setf(ios::fixed);
+		cout.setf(ios::showpoint);
+		cout.precision(2);
+
+		//calling the functions in the main to be displayed to the user for the first time before asking if they wish to add another number:
+		getInValue(fname, lname, phone, minutes, dataused, package); //gets the values for the 1st and last name, phone no., mins, data and package used
+		cost = calc_price(minutes, dataused, package); //calculates the price for mins and data used based on the user’s package
+		char recPackage = recommendpackage(minutes, dataused); //recommends the most cost effective package if the user is paying for option they don’t need based on the information they inputted previously about the mins and data used and the package they are currently on.
+		displayInvoice(fname, lname, phone, minutes, dataused, package, cost); //it’s a display function that cout’s the 1st and last name, phone no., mins, data, package used and total cost then it proceeds to print out the recommendation if one is needed.
+
+		
+		do {
+			//asks the user if they would like to add another phone number
+			cout << "\nWould you like to enter another phone number?\nChoose 1 or 2: \n1.Yes\t\t 2.No" << endl;
+			cin >> option;
+			cout << endl;
+			//error checking to make sure they only inout 1 or 2
+			if (option != '2' && option != '1') {
+				cout << "\nInvalid selection!" << endl;
+			}
+			//if they choose 1 then it will not ask the user for the first and last name so it will use the overloaded function here
+			if (option == '1') {
+				//the overload function is used here since we don't need the first and last names
+				getInValue(phone, minutes, dataused, package);
+				cost = calc_price(minutes, dataused, package);
+				char recPackage = recommendpackage(minutes, dataused);
+				displayInvoice(fname, lname, phone, minutes, dataused, package, cost);
+			}
+
+		} while (option != '2'); //the loop won't stop until the user inputs 2
+		cout << endl;
+		cout << "End of program!" << endl; //the program will display this message at the end of the program when the loop is no longer true
+		return 0;
+	}
